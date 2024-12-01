@@ -1210,6 +1210,11 @@ static void LoadIwadDeh(void)
     // and installed next to the IWAD.
     if (gameversion == exe_chex)
     {
+        // A simple hack for Freedom Scoops: This reads into the iwads 
+        // for a "DEHACKED" Lump file for both games. If both of the FS wads are not found 
+        // then it will look for "chex.deh" try to load the chex.wad instead.- ZNukem
+        if (!DEH_LoadLumpByName("DEHACKED", true, false)) // Looks inside the iwad for a "DEHACKED" lump. 
+        {
         char *chex_deh = NULL;
         char *dirname;
 
@@ -1229,11 +1234,18 @@ static void LoadIwadDeh(void)
         // Still not found?
         if (chex_deh == NULL)
         {
-            I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
+           I_Error( // If theres no "Chex.deh" found to play the Chex.wad.
+                    "Unable to find Chex Quest dehacked file (chex.deh).\n"
                     "The dehacked file is required in order to emulate\n"
                     "chex.exe correctly.  It can be found in your nearest\n"
-                    "/idgames repository mirror at:\n\n"
-                    "   themes/chex/chexdeh.zip");
+                    "/idgames repository mirror at: themes/chex/chexdeh.zip\n\n"
+
+                    // Then this will prompt the user to try out Freedom Scoops 
+                    // after they read the Chex message above.
+                    "Why not try out a copy of Freedom Scoops for a change.\n"
+                    "It is a free open source game alternative to Chex Quest series.\n"
+                    "You can download the wads over at GitHub repository!" 
+                    );
         }
 
         if (!DEH_LoadFile(chex_deh))
@@ -1241,7 +1253,7 @@ static void LoadIwadDeh(void)
             I_Error("Failed to load chex.deh needed for emulating chex.exe.");
         }
     }
-
+}
     if (IsFrenchIWAD())
     {
         char *french_deh = NULL;
